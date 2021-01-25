@@ -2,10 +2,13 @@ import express from "express";
 import mongoose from "mongoose";
 import dotenv from "dotenv";
 
+import userRoute from "./routes/User";
+
 dotenv.config();
+const app = express();
 
 // Connect to database
-(async () => {
+const db_connect = async () => {
   try {
     if (process.env.DB_CONNECT === undefined) {
       console.log("ERROR: DB_CONNECT is not defined in a .env file");
@@ -14,16 +17,36 @@ dotenv.config();
     await mongoose.connect(process.env.DB_CONNECT, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
     });
-    console.log("Connected to database!");
   } catch (error) {
     console.log("Can't connect to database!");
     process.exit();
   }
-})();
+};
 
-const app = express();
+db_connect();
 
+mongoose.connection.on("connected", () => {
+  console.log("Connected to database!");
+});
+
+mongoose.connection.on("error", (error) => {
+  console.log(error);
+});
+
+mongoose.connection.on("disconnected", () => {
+  console.log("Disconnected! Attempting to reconnect...");
+  db_connect();
+});
+
+// Middlewares
+app.use(express.json());
+
+// Route Middlewares
+app.use("/api/user", userRoute);
+
+// Listen for requests
 if (process.env.PORT === undefined) {
   console.log("ERROR: PORT is not defined in a .env file");
   process.exit();
