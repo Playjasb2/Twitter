@@ -52,4 +52,9 @@ if (process.env.PORT === undefined) {
   process.exit();
 }
 
+if (process.env.TOKEN_SECRET === undefined) {
+  console.log("ERROR: TOKEN_SECRET is not defined in a .env file");
+  process.exit();
+}
+
 app.listen(process.env.PORT, () => console.log("Server is up and running!"));
