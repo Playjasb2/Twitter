@@ -1,5 +1,6 @@
 import express from "express";
 import mongoose from "mongoose";
+import cors from "cors";
 import dotenv from "dotenv";
 
 import userRoute from "./routes/User";
@@ -41,6 +42,7 @@ mongoose.connection.on("disconnected", () => {
 });
 
 // Middlewares
+app.use(cors());
 app.use(express.json());
 
 // Route Middlewares
