@@ -26,8 +26,6 @@ const db_connect = async () => {
   }
 };
 
-db_connect();
-
 mongoose.connection.on("connected", () => {
   console.log("Connected to database!");
 });
@@ -41,6 +39,8 @@ mongoose.connection.on("disconnected", () => {
   db_connect();
 });
 
+db_connect();
+
 // Middlewares
 app.use(cors());
 app.use(express.json());
@@ -48,14 +48,15 @@ app.use(express.json());
 // Route Middlewares
 app.use("/api/user", userRoute);
 
-// Listen for requests
-if (process.env.PORT === undefined) {
-  console.log("ERROR: PORT is not defined in a .env file");
+// Check that JWT secret has been defined
+if (process.env.TOKEN_SECRET === undefined) {
+  console.log("ERROR: TOKEN_SECRET is not defined in a .env file");
   process.exit();
 }
 
-if (process.env.TOKEN_SECRET === undefined) {
-  console.log("ERROR: TOKEN_SECRET is not defined in a .env file");
+// Listen for requests
+if (process.env.PORT === undefined) {
+  console.log("ERROR: PORT is not defined in a .env file");
   process.exit();
 }
 
