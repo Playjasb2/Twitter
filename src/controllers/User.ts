@@ -3,7 +3,7 @@ import User from "../models/User";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-import { registerValidation, loginValidation } from "../validation";
+import { registerValidation, loginValidation } from "../util/validation";
 
 export const register = async (req: Request, res: Response) => {
   const userData = {
@@ -35,10 +35,13 @@ export const register = async (req: Request, res: Response) => {
       username: userData.username,
       password: hashPassword,
     });
+
     await user.save();
     res.send("User saved successfully!");
+    return res;
   } catch (error) {
-    return res.status(400).send(error.message);
+    res.status(400).send(error.message);
+    return res;
   }
 };
 

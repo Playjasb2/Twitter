@@ -6,10 +6,10 @@ const UserSchema: Schema = new Schema({
   date: { type: Date, default: Date.now },
 });
 
-interface User extends mongoose.Document {
+interface UserDocumentType extends mongoose.Document {
   username: string;
   password: string;
   date: Date;
 }
 
-export default mongoose.model<User>("User", UserSchema);
+export default mongoose.model<UserDocumentType>("User", UserSchema);
