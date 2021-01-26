@@ -79,7 +79,11 @@ export const login = async (req: Request, res: Response) => {
 
     res.header("auth-token", token);
     res.send("Logged in!");
+
+    return res;
   } catch (error) {
     res.status(400).send("Incorrect username or password");
+
+    return res;
   }
 };
