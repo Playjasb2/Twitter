@@ -4,9 +4,22 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import userRoute from "./routes/User";
+import ChatServer from "./ChatServer";
 
 dotenv.config();
 const app = express();
+
+// Check that JWT secret has been defined
+if (process.env.TOKEN_SECRET === undefined) {
+  console.log("ERROR: TOKEN_SECRET is not defined in a .env file");
+  process.exit();
+}
+
+// Listen for requests
+if (process.env.PORT === undefined) {
+  console.log("ERROR: PORT is not defined in a .env file");
+  process.exit();
+}
 
 // Connect to database
 const db_connect = async () => {
@@ -48,16 +61,9 @@ app.use(express.json());
 // Route Middlewares
 app.use("/api/user", userRoute);
 
-// Check that JWT secret has been defined
-if (process.env.TOKEN_SECRET === undefined) {
-  console.log("ERROR: TOKEN_SECRET is not defined in a .env file");
-  process.exit();
-}
+const server = app.listen(process.env.PORT, () =>
+  console.log("Server is up and running!")
+);
 
-// Listen for requests
-if (process.env.PORT === undefined) {
-  console.log("ERROR: PORT is not defined in a .env file");
-  process.exit();
-}
-
-app.listen(process.env.PORT, () => console.log("Server is up and running!"));
+// Setup chat service
+const chatServer = new ChatServer(server);
