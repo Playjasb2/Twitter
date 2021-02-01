@@ -1,6 +1,6 @@
 import Message from "../models/Message";
 import User from "../models/User";
-import { MessageType, ExtendedSocket, AllMessagesOrder } from "../ChatServer";
+import { MessageType, AllMessagesOrder } from "../servers/ChatServer";
 
 export const saveMessage = async (msg: MessageType) => {
   const fromUser = await User.findOne({ username: msg.from });

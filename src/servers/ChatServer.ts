@@ -2,8 +2,12 @@ import socketIO from "socket.io";
 import { Server } from "http";
 import jwt from "jsonwebtoken";
 
-import User from "./models/User";
-import { saveMessage, getAllMessages } from "./controllers/Chat";
+import User from "../models/User";
+import { saveMessage, getAllMessages } from "../controllers/Chat";
+
+import * as env from "env-var";
+
+const TOKEN_SECRET = env.get("TOKEN_SECRET").required().asString();
 
 interface myHeader {
   token: undefined | string;
@@ -56,7 +60,7 @@ class ChatServer {
 
         if (handshake && handshake.token !== undefined) {
           const token = handshake.token;
-          jwt.verify(token, process.env.TOKEN_SECRET!, async (err, decoded) => {
+          jwt.verify(token, TOKEN_SECRET, async (err, decoded) => {
             // If the token is invalid
             if (err) return next(new Error("Authentication error"));
 

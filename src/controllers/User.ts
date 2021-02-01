@@ -5,6 +5,10 @@ import jwt from "jsonwebtoken";
 
 import { registerValidation, loginValidation } from "../util/validation";
 
+import * as env from "env-var";
+
+const TOKEN_SECRET = env.get("TOKEN_SECRET").required().asString();
+
 export const register = async (req: Request, res: Response) => {
   const userData = {
     username: req.body.username,
@@ -75,7 +79,7 @@ export const login = async (req: Request, res: Response) => {
       return res.status(400).send("Incorrect username or password");
     }
 
-    const token = jwt.sign({ _id: user._id }, process.env.TOKEN_SECRET!);
+    const token = jwt.sign({ _id: user._id }, TOKEN_SECRET);
 
     res.header("auth-token", token);
     res.send("Logged in!");

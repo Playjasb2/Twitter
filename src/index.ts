@@ -1,38 +1,39 @@
 import express from "express";
 import mongoose from "mongoose";
 import cors from "cors";
-import dotenv from "dotenv";
 
 import userRoute from "./routes/User";
-import ChatServer from "./ChatServer";
+import ChatServer from "./servers/ChatServer";
 
-dotenv.config();
+import * as env from "env-var";
+
+const PORT = env.get("PORT").required().asPortNumber();
+const DB_CONNECT = env.get("DB_CONNECT").required().asString();
+
 const app = express();
 
-// Check that JWT secret has been defined
-if (process.env.TOKEN_SECRET === undefined) {
-  console.log("ERROR: TOKEN_SECRET is not defined in a .env file");
-  process.exit();
-}
+// Middlewares
+app.use(cors());
+app.use(express.json());
 
-// Listen for requests
-if (process.env.PORT === undefined) {
-  console.log("ERROR: PORT is not defined in a .env file");
-  process.exit();
-}
+// Route Middlewares
+app.use("/api/user", userRoute);
 
 // Connect to database
 const db_connect = async () => {
   try {
-    if (process.env.DB_CONNECT === undefined) {
-      console.log("ERROR: DB_CONNECT is not defined in a .env file");
-      process.exit();
-    }
-    await mongoose.connect(process.env.DB_CONNECT, {
+    await mongoose.connect(DB_CONNECT, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
     });
+
+    const server = app.listen(PORT, () =>
+      console.log("Server is up and running!")
+    );
+
+    // Setup chat service
+    const chatServer = new ChatServer(server);
   } catch (error) {
     console.log("Can't connect to database!");
     process.exit();
@@ -53,17 +54,3 @@ mongoose.connection.on("disconnected", () => {
 });
 
 db_connect();
-
-// Middlewares
-app.use(cors());
-app.use(express.json());
-
-// Route Middlewares
-app.use("/api/user", userRoute);
-
-const server = app.listen(process.env.PORT, () =>
-  console.log("Server is up and running!")
-);
-
-// Setup chat service
-const chatServer = new ChatServer(server);
