@@ -22,6 +22,8 @@ export const saveMessage = async (msg: MessageType) => {
   });
 
   await message.save();
+
+  return true;
 };
 
 export const getAllMessages = async (order: AllMessagesOrder) => {

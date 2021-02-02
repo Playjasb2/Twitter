@@ -11,20 +11,20 @@ import { register, login } from "../src/controllers/User";
 chai.use(sinonChai);
 
 describe("User Controller", () => {
-  let user_findOne_stub: any;
-  let save_stub: any;
-  let bcrypt_compare_stub: any;
-  let jwt_sign_stub: any;
+  let user_findOne_stub: sinon.SinonStub;
+  let user_save_stub: sinon.SinonStub;
+  let bcrypt_compare_stub: sinon.SinonStub;
+  let jwt_sign_stub: sinon.SinonStub;
 
   let mockReq: Request;
   let mockRes: Response;
 
   before(() => {
-    save_stub = sinon.stub(User.prototype, "save");
+    user_save_stub = sinon.stub(User.prototype, "save");
   });
 
   after(() => {
-    save_stub.restore();
+    user_save_stub.restore();
   });
 
   beforeEach(() => {
